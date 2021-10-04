@@ -464,6 +464,8 @@ const bodyObserver = new MutationObserver(mutations => {
             gSubtitleMenu = new SubtitleMenu();
             gSubtitleMenu.render();
           }
+          node.style.left = "auto";
+          node.style.right = "10px";
           node.querySelector('div[data-uia="selector-audio-subtitle"]').appendChild(gSubtitleMenu.elem);
         }
       }
