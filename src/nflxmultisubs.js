@@ -406,39 +406,36 @@ const SUBTITLE_LIST_CLASSNAME = 'nflxmultisubs-subtitle-list';
 class SubtitleMenu {
   constructor() {
     this.elem = document.createElement('div');
-    this.elem.classList.add('track-list', 'structural', 'track-list-subtitles');
+    this.elem.classList.add('ltr-1rr4qq7', 'structural', 'track-list-subtitles');
     this.elem.classList.add(SUBTITLE_LIST_CLASSNAME);
   }
 
   render() {
-    const checkIcon = `<span class="video-controls-check">
-      <svg class="svg-icon svg-icon-nfplayerCheck" focusable="false">
-      <use filter="" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#nfplayerCheck"></use>
-      </svg></span>`;
+    const checkIcon = `<svg viewBox="0 0 24 24" class="ltr-1g709ml"><path fill="currentColor" d="M3.707 12.293l-1.414 1.414L8 19.414 21.707 5.707l-1.414-1.414L8 16.586z"></path></svg>`;
 
-    const loadingIcon = `<span class="video-controls-check">
-      <svg class="svg-icon svg-icon-nfplayerCheck" focusable="false" viewBox="0 -5 50 55">
+    const loadingIcon = `<svg class="ltr-1g709ml" focusable="false" viewBox="0 -5 50 55">
           <path d="M 6 25 C6 21, 0 21, 0 25 C0 57, 49 59, 50 25 C50 50, 8 55, 6 25" stroke="transparent" fill="red">
             <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite"/>
           </path>
-      </svg></span>`;
+      </svg>`;
 
-    this.elem.innerHTML = `<h3 class="list-header" style="min-width:10em">Secondary Subtitles</h3>`;
+    this.elem.innerHTML = `<h3 class="ltr-ccs7uw">Secondary Subtitles</h3>`;
 
     const listElem = document.createElement('ul');
     gSubtitles.forEach((sub, id) => {
       let item = document.createElement('li');
-      item.classList.add('track');
+      item.classList.add('ltr-1rvtjq');
       if (sub.active) {
         const icon = sub.state === 'LOADING' ? loadingIcon : checkIcon;
         item.classList.add('selected');
-        item.innerHTML = `${icon}${sub.lang}`;
+        item.innerHTML = `<div>${icon}<div class="ltr-1oiuwg2">${sub.lang}</div></div>`;
       } else {
-        item.innerHTML = sub.lang;
+        item.innerHTML = `<div><div class="ltr-1mjiiew">${sub.lang}</div></div>`;
         item.addEventListener('click', () => {
           activateSubtitle(id);
         });
       }
+      listElem.classList.add('ltr-27aw42');
       listElem.appendChild(item);
     });
     this.elem.appendChild(listElem);
@@ -467,7 +464,9 @@ const bodyObserver = new MutationObserver(mutations => {
             gSubtitleMenu = new SubtitleMenu();
             gSubtitleMenu.render();
           }
-          node.appendChild(gSubtitleMenu.elem);
+          node.style.left = "auto";
+          node.style.right = "10px";
+          node.querySelector('div[data-uia="selector-audio-subtitle"]').appendChild(gSubtitleMenu.elem);
         }
       }
     });
