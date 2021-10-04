@@ -8,6 +8,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 // =============================================================================
 
 const mode = (process.env.NODE_ENV || 'production');
+const mini = !(process.env.DISABLE_MINI); // disable minification if env DISABLE_MINI is set
 
 const kProjectDir = __dirname;
 const kSourceDir = path.join(kProjectDir, 'src');
@@ -22,6 +23,10 @@ const configs = browsers.map(browser => {
   const buildDir = path.join(kBuildDir, browser);
   return {
     mode: mode,
+
+    optimization: {
+      minimize: mini
+    },
 
     entry: {
       background: path.join(kSourceDir, 'background.js'),
