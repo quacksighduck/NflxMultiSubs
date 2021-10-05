@@ -2,7 +2,7 @@
   "name": "NflxMultiSubs (Netflix Multi. Subtitles)",
   "manifest_version": 2,
   "author": "Dan Chen",
-  "version": "2.2.0",
+  "version": "2.2.1",
 
   "permissions": [
     "storage",
