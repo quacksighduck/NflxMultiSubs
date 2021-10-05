@@ -39,6 +39,17 @@ hookJsonParseAndAddCallback(window);
 
     processStateChange()
   })(history.pushState);
+
+  // Sometimes the URL captured by pushState does not contain the correct movieId, causing the manifest activation to fail.
+  // This happens when there is a server-side redirect after starting playback, which doesn't trigger the pushState hook.
+  // For example, a redirect happens after you click on a show thumbnail to start it instead of the play icon.
+  // So we also hook history.replaceState to capture this redirect.
+  history.replaceState = ( f => function replaceState(state, ...args){
+    f.call(history, state, ...args);
+    console.log(`replaceState: ${state.url}`);
+
+    processStateChange()
+  })(history.replaceState);
 })();
 
 ////////////////////////////////////////////////////////////////////////////////
