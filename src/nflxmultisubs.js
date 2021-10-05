@@ -26,16 +26,19 @@ hookJsonParseAndAddCallback(window);
 // Because Netflix preload manifests when the user hovers mouse over movies on index page,
 // our .updateManifest() won't be trigger after user clicks a movie to start watching (they must reload the player page)
 (() => {
-  const _pushState = history.pushState;
-  history.pushState = (state, ...args) => {
-    _pushState.call(history, state, ...args);
-    console.log(`pushState: ${state.url}`);
-
+  function processStateChange() {
     const movieIdInUrl = extractMovieIdFromUrl();
     if (!movieIdInUrl) return;
     console.log(`Movie changed, movieId: ${movieIdInUrl}`);
     nflxMultiSubsManager.activateManifest(movieIdInUrl);
-  };
+  }
+
+  history.pushState = ( f => function pushState(state, ...args){
+    f.call(history, state, ...args);
+    console.log(`pushState: ${state.url}`);
+
+    processStateChange()
+  })(history.pushState);
 })();
 
 ////////////////////////////////////////////////////////////////////////////////
