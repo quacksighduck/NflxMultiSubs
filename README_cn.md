@@ -26,7 +26,14 @@ Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
 ![中文、日語雙字幕](docs/zh-ja.jpg?raw=true)
 ![整合原生語言選單](docs/popup-menu.jpg?raw=true)
 
-
+构建
+----
+```
+git clone https://github.com/gmertes/NflxMultiSubs.git
+cd NflxMultiSubs
+npm install
+npm run build
+```
 
 使用須知 & 已知問題
 -------------------
@@ -40,6 +47,8 @@ Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
 
 遇到問題了嗎？
 --------------
+### 字幕列表是空的
+- 重新整理 (F5) 后字幕会出现
 ### Netflix 播放器一直轉圈圈，最後跳出錯誤訊息
 - 通常從「影片列表」進到「播放頁面」會發生這種狀況
 - 多按幾次重新整理 (F5) 試試看 XD
@@ -61,7 +70,7 @@ Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
 
 ### 可不可以加入＿＿＿＿功能？
 - 這個套件只想專注做好一件事：提供「雙語字幕」的良好觀影體驗
-- 目前開發者沒用到的功能就不會加入
+- 如果有请求，可以打开 issue（请写英文与在标题写入[Feature Request]）
 
 
 
