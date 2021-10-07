@@ -722,6 +722,7 @@ class RendererLoop {
   _loop() {
     const currentVideoElem = document.querySelector('#appMountPoint video');
     if (currentVideoElem && this.videoElem.src !== currentVideoElem.src) {
+      // TODO: do we still need to check for this?
       // some video change episodes by update video src
       // force terminate renderer loop if src changed
       window.__NflxMultiSubs.rendererLoopDestroy();
@@ -1138,6 +1139,7 @@ class NflxMultiSubsManager {
     if (!movieIdInUrl) return;
 
     console.log(`rendererLoop destroyed, trying to activate: ${movieIdInUrl}`);
+    this.lastMovieId = undefined;
     this.activateManifest(movieIdInUrl);
   }
 }
