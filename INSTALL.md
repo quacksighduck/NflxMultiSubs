@@ -18,6 +18,10 @@ Chrome
 
 That's it, the extension should now be installed!
 
+To update the extension with a new release, 
+simply download the new zip file and extract the contents to your `NflxMultiSubs` folder (overwrite all files). 
+If you have open Netflix tabs, close them. The extension is now updated.
+
 Firefox
 ----
 
