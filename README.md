@@ -3,12 +3,13 @@
 
 <img src="docs/icon.png?raw=true" height="48"> NflxMultiSubs
 ============================================================
-Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
+Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix! 
 
+This repository is updated for 2021 with a fix for the Netflix redesign and other bug fixes.
 
 [![Download on Chrome Web Store](docs/chrome-webstore-badge58.png?raw=true)](https://chrome.google.com/webstore/detail/pjhnilfooknlkdonmjnleaomamfehkli/)
 
-
+#### NOTE: the Chrome store release is outdated and does not work (as of 2021-10-08). To get the fix for the Netflix redesign, you have to install it manually from this repository for now (instructions below).
 
 Features
 --------
@@ -17,14 +18,6 @@ Features
 - Seamless integration with native Netflix player UI -- switch languages in place
 - Adjust playback speed (pressing key `[` and `]`)
 - Open source!!
-
-
-
-See it in Action
-----------------
-![Bilingual Subtitles with zh-tw/jp](docs/zh-ja.jpg?raw=true)
-![Intergrated in original menu](docs/popup-menu.jpg?raw=true)
-
 
 Build
 -----
@@ -40,6 +33,12 @@ How to manually install the extension
 -----
 See [INSTALL.md](INSTALL.md) for instructions.
 
+See it in Action
+----------------
+![Bilingual Subtitles with zh-tw/jp](docs/zh-ja.jpg?raw=true)
+![Intergrated in original menu](docs/popup-menu.jpg?raw=true)
+
+
 Known Issues
 -------------------------
 - Refresh the page if the secondary sub list is empty.
@@ -51,7 +50,7 @@ Known Issues
 
 Problems?
 ---------
-### The secondary subtitles list is empty
+### The secondary subtitles list is empty or subs aren't showing up
 - Subs will show up after a Refresh (F5).
 
 ### Netflix player keeps loading, and error messages occurs afterward
