@@ -36,6 +36,10 @@ npm install
 npm run build
 ```
 
+How to manually install the extension
+-----
+See [INSTALL.md](INSTALL.md) for instructions.
+
 Known Issues
 -------------------------
 - Refresh the page if the secondary sub list is empty.
