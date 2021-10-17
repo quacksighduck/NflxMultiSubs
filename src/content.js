@@ -13,7 +13,7 @@ window.addEventListener('load', () => {
   scriptsToInject.forEach(scriptName => {
     const scriptElem = document.createElement('script');
     scriptElem.setAttribute('type', 'text/javascript');
-    scriptElem.setAttribute('src', chrome.extension.getURL(scriptName));
+    scriptElem.setAttribute('src', chrome.runtime.getURL(scriptName));
     document.head.appendChild(scriptElem);
     console.log(`Injected: ${scriptName}`);
   });
