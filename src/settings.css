@@ -88,13 +88,13 @@ footer {
 }
 
 .settings-secondary-lang {
-  filter: blur(6px) grayscale(100%);
+  /*filter: blur(6px) grayscale(100%);*/
   transition: all 1s;
 }
 
 .settings-secondary-lang:hover {
-  cursor: not-allowed !important;
-  filter: blur(0);
+/*  cursor: not-allowed !important;
+  filter: blur(0);*/
 }
 
 .settings-layout div,
@@ -110,11 +110,10 @@ footer {
 }
 
 .settings-layout div:hover,
-.settings-layout div.active
-/*
+.settings-layout div.active,
 .settings-secondary-lang div:hover,
 .settings-secondary-lang div.active
-*/
+
 {
   color: hsl(0, 70%, 50%);
   cursor: pointer;
@@ -126,21 +125,17 @@ footer {
 }
 
 .settings-layout svg:hover rect,
-.settings-layout div.active svg rect
-/*
+.settings-layout div.active svg rect,
 .settings-secondary-lang svg:hover rect,
-.settings-secondary-lang svg:hover rect
-*/
+.settings-secondary-lang div.active svg rect
 {
   stroke: hsl(0, 70%, 50%);
 }
 
 .settings-layout svg:hover line,
-.settings-layout div.active svg line
-/*
+.settings-layout div.active svg line,
 .settings-secondary-lang svg:hover line,
 .settings-secondary-lang div.active svg line
-*/
 {
   stroke: hsl(0, 80%, 50%);
 }
@@ -168,6 +163,44 @@ footer {
   border-color: hsl(0, 70%, 50%);
   color: hsl(0, 70%, 50%);
   cursor: pointer;
+}
+
+.settings-secondary-lang div {
+  position: relative;
+  display: inline-block;
+}
+
+.settings-secondary-lang div span {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 4px 2px;
+  position: absolute;
+  z-index: 1;
+  top: 120%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.settings-secondary-lang div span::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
+}
+
+.settings-secondary-lang div:hover span{
+  visibility: visible;
+  opacity: 1;
 }
 
 .font-size-xs { font-size:  9px; }

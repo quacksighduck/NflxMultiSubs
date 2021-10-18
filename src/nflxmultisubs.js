@@ -61,6 +61,55 @@ let gMsgPort, gRendererLoop;
 let gVideoRatio = 1080 / 1920;
 let gRenderOptions = Object.assign({}, kDefaultSettings);
 
+(() => {
+  // connect with background script immediately so we can capture settings before playback (used for language mode)
+  if (BROWSER === 'chrome') {
+    if (gMsgPort) return;
+    try {
+      const extensionId = window.__nflxMultiSubsExtId;
+      gMsgPort = chrome.runtime.connect(extensionId);
+      console.log(`Linked: ${extensionId}`);
+
+      gMsgPort.onMessage.addListener(msg => {
+        if (!msg.settings) return;
+        gRenderOptions = Object.assign({}, msg.settings);
+        gRendererLoop && gRendererLoop.setRenderDirty();
+      });
+    } catch (err) {
+      console.warn('Error: cannot talk to background,', err);
+    }
+    return;
+  }
+
+  // Firefox: this injected agent cannot talk to extension directly, thus the
+  // connection (for applying settings) is relayed by our content script through
+  // window.postMessage().
+
+  if (BROWSER === 'firefox') {
+    window.addEventListener(
+        'message',
+        evt => {
+          if (!evt.data || evt.data.namespace !== 'nflxmultisubs') return;
+
+          if (evt.data.action === 'apply-settings' && evt.data.settings) {
+            gRenderOptions = Object.assign({}, evt.data.settings);
+            gRendererLoop && gRendererLoop.setRenderDirty();
+          }
+        },
+        false
+    );
+
+    try {
+      window.postMessage({
+        namespace: 'nflxmultisubs',
+        action: 'connect'
+      }, '*');
+    } catch (err) {
+      console.warn('Error: cannot talk to background,', err);
+    }
+  }
+})();
+
 ////////////////////////////////////////////////////////////////////////////////
 
 class SubtitleBase {
@@ -505,7 +554,26 @@ activateSubtitle = id => {
   const sub = gSubtitles[id];
   if (sub) {
     gSubtitles.forEach(sub => sub.deactivate());
-    sub.activate().then(() => gSubtitleMenu && gSubtitleMenu.render());
+    sub.activate().then(() => {
+      gSubtitleMenu && gSubtitleMenu.render()
+      gRenderOptions.secondaryLanguageLastUsed = sub.bcp47;
+      if (BROWSER === 'chrome') {
+        if (gMsgPort)
+          gMsgPort.postMessage({settings: gRenderOptions});
+      }else {
+        // Firefox
+        try {
+          window.postMessage({
+            namespace: 'nflxmultisubs',
+            action: 'update-settings',
+            settings: gRenderOptions
+          }, '*');
+        } catch (err) {
+          console.warn('Error: cannot talk to background,', err);
+        }
+      }
+    });
+
   }
   gSubtitleMenu && gSubtitleMenu.render();
 };
@@ -719,13 +787,41 @@ class RendererLoop {
   start() {
     this.isRunning = true;
     window.requestAnimationFrame(this.loop.bind(this));
-    this._connect();
+    if (BROWSER === 'chrome') {
+      if (gMsgPort)
+        gMsgPort.postMessage({ startPlayback: 1 });
+    }else {
+      // Firefox
+      try {
+        window.postMessage({
+          namespace: 'nflxmultisubs',
+          action: 'startPlayback'
+        }, '*');
+      } catch (err) {
+        console.warn('Error: cannot talk to background,', err);
+      }
+    }
+    //this._connect();
   }
 
   stop() {
     this.isRunning = false;
     this._clearSecondarySubtitles();
-    this._disconnect();
+    if (BROWSER === 'chrome') {
+      if (gMsgPort)
+        gMsgPort.postMessage({ stopPlayback: 1 });
+    }else {
+      // Firefox
+      try {
+        window.postMessage({
+          namespace: 'nflxmultisubs',
+          action: 'stopPlayback'
+        }, '*');
+      } catch (err) {
+        console.warn('Error: cannot talk to background,', err);
+      }
+    }
+    //this._disconnect();
   }
 
   loop() {
@@ -750,6 +846,7 @@ class RendererLoop {
 
     // this script may be loaded while user's at the movie list page,
     // thus if there's no video playing, we can end the renderer loop
+    // FIXME: doesn't trigger when videoplayer is closed
     if (!this.videoElem && !/netflix\.com\/watch/i.test(window.location.href)) {
       this.stop();
       return;
@@ -1091,20 +1188,49 @@ class NflxMultiSubsManager {
           gSubtitleMenu = new SubtitleMenu();
           gSubtitleMenu.render();
 
-          // select subtitle to match the default audio track
-          try {
-            const defaultAudioId = manifest.defaultTrackOrderList[0].audioTrackId;
-            const defaultAudioTrack = manifest.audio_tracks.find(t => t.id == defaultAudioId);
-            const defaultAudioLanguage = defaultAudioTrack.language;
-            console.log(`Default audio track language: ${defaultAudioLanguage}`);
-            const autoSubtitleId = gSubtitles.findIndex(t => t.bcp47 == defaultAudioLanguage);
-            if (autoSubtitleId >= 0) {
-              console.log(`Subtitle #${autoSubtitleId} auto-enabled to match audio`);
-              activateSubtitle(autoSubtitleId);
-            }
-          }
-          catch (err) {
-            console.error('Default audio track not found, ', err);
+          // select subtitle based on language settings
+          console.log('Language mode: ', gRenderOptions.secondaryLanguageMode);
+          switch(String(gRenderOptions.secondaryLanguageMode)){
+            case 'disabled':
+              console.log('Subs disabled.');
+              break;
+            default:
+            case 'audio':
+              try {
+                const defaultAudioId = manifest.defaultTrackOrderList[0].audioTrackId;
+                const defaultAudioTrack = manifest.audio_tracks.find(t => t.id == defaultAudioId);
+                const defaultAudioLanguage = defaultAudioTrack.language;
+                console.log(`Default audio track language: ${defaultAudioLanguage}`);
+                const autoSubtitleId = gSubtitles.findIndex(t => t.bcp47 == defaultAudioLanguage);
+                if (autoSubtitleId >= 0) {
+                  console.log(`Subtitle #${autoSubtitleId} auto-enabled to match audio`);
+                  activateSubtitle(autoSubtitleId);
+                }else{
+                  console.log(defaultAudioLanguage + ' subs not available.');
+                }
+              }
+              catch (err) {
+                console.error('Default audio track not found, ', err);
+              }
+              break;
+            case 'last':
+              if (gRenderOptions.secondaryLanguageLastUsed){
+                console.log('Activating last sub language', gRenderOptions.secondaryLanguageLastUsed)
+                try{
+                  const lastSubtitleId = gSubtitles.findIndex(t => t.bcp47 == gRenderOptions.secondaryLanguageLastUsed);
+                  if (lastSubtitleId >= 0) {
+                    console.log(`Subtitle #${lastSubtitleId} enabled`);
+                    activateSubtitle(lastSubtitleId);
+                  }else{
+                    console.log(gRenderOptions.secondaryLanguageLastUsed + ' subs not available.');
+                  }
+                } catch (err){
+                  console.error('Error activating last sub language, ', err);
+                }
+              }else{
+                console.log('Last used language is empty, subs disabled.');
+              }
+              break;
           }
 
           // retrieve video ratio
@@ -1168,24 +1294,6 @@ window.__NflxMultiSubs = nflxMultiSubsManager;  // interface between us and the 
 
 // =============================================================================
 
-// Firefox: this injected agent cannot talk to extension directly, thus the
-// connection (for applying settings) is relayed by our content script through
-// window.postMessage().
-
-if (BROWSER === 'firefox') {
-  window.addEventListener(
-    'message',
-    evt => {
-      if (!evt.data || evt.data.namespace !== 'nflxmultisubs') return;
-
-      if (evt.data.action === 'apply-settings' && evt.data.settings) {
-        gRenderOptions = Object.assign({}, evt.data.settings);
-        gRendererLoop && gRendererLoop.setRenderDirty();
-      }
-    },
-    false
-  );
-}
 
 // =============================================================================
 

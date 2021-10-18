@@ -73,14 +73,40 @@ function handleExternalConnection(port) {
   if (!tabId) return;
 
   gExtPorts[tabId] = port;
-  saturateActionIconForTab(tabId);
   console.log(`Connected: ${tabId} (tab)`);
 
   port.postMessage({ settings: gSettings });
 
+  port.onMessage.addListener(msg => {
+    if (msg.settings) {
+      console.log('Received from injected agent: settings=', msg.settings);
+      let settings = Object.assign({}, gSettings);
+      settings = Object.assign(settings, msg.settings);
+      if (!validateSettings(settings)) {
+        gSettings = Object.assign({}, kDefaultSettings);
+        port.postMessage({ settings: gSettings });
+      }
+      else {
+        gSettings = settings;
+      }
+      saveSettings();
+      dispatchSettings();
+    }
+    else if(msg.startPlayback){
+      console.log('Saturate icon')
+      saturateActionIconForTab(tabId);
+    }
+    else if(msg.stopPlayback){
+      console.log('Desaturate icon')
+      desaturateActionIconForTab(tabId);
+    }
+    else {
+
+    }
+  });
+
   port.onDisconnect.addListener(() => {
     delete gExtPorts[tabId];
-    desaturateActionIconForTab(tabId);
     console.log(`Disconnected: ${tabId} (tab)`);
   });
 }
@@ -95,12 +121,12 @@ function handleInternalConnection(port) {
    port.postMessage({ settings: gSettings });
 
    port.onMessage.addListener(msg => {
-     console.log('Received: settings=', msg.settings);
      if (!msg.settings) {
        gSettings = Object.assign({}, kDefaultSettings);
        port.postMessage({ settings: gSettings });
      }
      else {
+       console.log('Received: settings=', msg.settings);
        let settings = Object.assign({}, gSettings);
        settings = Object.assign(settings, msg.settings);
        if (!validateSettings(settings)) {
