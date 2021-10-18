@@ -1043,7 +1043,7 @@ class NflxMultiSubsManager {
   activateManifest(movieId) {
     const manifest = this.manifestManager.getManifest(movieId);
     if (!manifest) {
-      console.error(`Cannot find manifest: ${movieId}`);
+      console.log(`Cannot find manifest: ${movieId}`);
       return;
     }
 
