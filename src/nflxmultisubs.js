@@ -554,26 +554,24 @@ activateSubtitle = id => {
   const sub = gSubtitles[id];
   if (sub) {
     gSubtitles.forEach(sub => sub.deactivate());
-    sub.activate().then(() => {
-      gSubtitleMenu && gSubtitleMenu.render()
-      gRenderOptions.secondaryLanguageLastUsed = sub.bcp47;
-      if (BROWSER === 'chrome') {
-        if (gMsgPort)
-          gMsgPort.postMessage({settings: gRenderOptions});
-      }else {
-        // Firefox
-        try {
-          window.postMessage({
-            namespace: 'nflxmultisubs',
-            action: 'update-settings',
-            settings: gRenderOptions
-          }, '*');
-        } catch (err) {
-          console.warn('Error: cannot talk to background,', err);
-        }
-      }
-    });
+    sub.activate().then(() => {gSubtitleMenu && gSubtitleMenu.render();});
 
+    gRenderOptions.secondaryLanguageLastUsed = sub.bcp47;
+    if (BROWSER === 'chrome') {
+      if (gMsgPort)
+        gMsgPort.postMessage({settings: gRenderOptions});
+    } else {
+      // Firefox
+      try {
+        window.postMessage({
+          namespace: 'nflxmultisubs',
+          action: 'update-settings',
+          settings: gRenderOptions
+        }, '*');
+      } catch (err) {
+        console.warn('Error: cannot talk to background,', err);
+      }
+    }
   }
   gSubtitleMenu && gSubtitleMenu.render();
 };
