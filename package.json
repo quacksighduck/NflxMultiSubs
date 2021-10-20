@@ -1,7 +1,7 @@
 {
   "name": "NflxMultiSubs",
-  "description": "Bilingual Subtitles & Enhanced Experiences for Netflix",
-  "author": "Dan Chen",
+  "description": "Bilingual Subtitles for Netflix (fixed)",
+  "author": "Dan Chen, Gert Mertes",
   "version": "2.2.3",
   "license": "MIT",
   "private": true,
