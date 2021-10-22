@@ -7,7 +7,7 @@ Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
 
 This repository is updated for 2021 with a fix for the Netflix redesign and other bug fixes.
 
-[![Download on Chrome Web Store](docs/chrome-webstore-badge58.png?raw=true)](https://chrome.google.com/webstore/detail/pjhnilfooknlkdonmjnleaomamfehkli/)
+[<img src="https://user-images.githubusercontent.com/13658335/138086366-8deee659-16c3-4621-b3f0-eaf4cb6ed9ba.png" height="60"/>](https://addons.mozilla.org/en-GB/firefox/addon/nflxmultisubs-2021)
 
 #### NOTE: the Chrome store release is outdated and does not work (as of 2021-10-08). To get the fix for the Netflix redesign, you have to install it manually from this repository for now (instructions below).
 
