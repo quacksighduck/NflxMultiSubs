@@ -35,12 +35,14 @@ See [INSTALL.md](INSTALL.md) for instructions.
 
 See it in Action
 ----------------
-![Bilingual Subtitles with zh-tw/jp](docs/zh-ja.jpg?raw=true)
-![Intergrated in original menu](docs/popup-menu.jpg?raw=true)
+![Bilingual Subtitles with zh-cn/en](docs/2021_zh-en.jpg?raw=true)
+![Intergrated in original menu](docs/2021_popup-menu.jpg?raw=true)
+![Settings menu](docs/2021_settings.jpg?raw=true)
 
 
 Known Issues
 -------------------------
+- Wait for the Netflix home page to finish loading completely before starting a show/movie.
 - Refresh the page if the secondary sub list is empty.
 - This extension could conflict with other Netflix-related extensions. If you encounter any problem, try to disable some of them
 - This extension could conflict with ad blockers (e.g. [uBlock Origin](https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm)); Please add `netflix.com` into their whitelists or disable the ad blockers

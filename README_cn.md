@@ -23,8 +23,9 @@ Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix!
 
 有圖有真相
 ----------
-![中文、日語雙字幕](docs/zh-ja.jpg?raw=true)
-![整合原生語言選單](docs/popup-menu.jpg?raw=true)
+![Bilingual Subtitles with zh-cn/en](docs/2021_zh-en.jpg?raw=true)
+![Intergrated in original menu](docs/2021_popup-menu.jpg?raw=true)
+![Settings menu](docs/2021_settings.jpg?raw=true)
 
 构建
 ----
