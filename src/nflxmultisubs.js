@@ -466,39 +466,58 @@ const buildSubtitleList = textTracks => {
 ////////////////////////////////////////////////////////////////////////////////
 
 const SUBTITLE_LIST_CLASSNAME = 'nflxmultisubs-subtitle-list';
+const SUB_MENU_SELECTOR = 'selector-audio-subtitle';
 class SubtitleMenu {
-  constructor() {
+  constructor(node) {
+    this.style = this.extractStyle(node)
     this.elem = document.createElement('div');
-    this.elem.classList.add('ltr-1rr4qq7', 'structural', 'track-list-subtitles');
+    this.elem.classList.add(this.style.maindiv, 'structural', 'track-list-subtitles');
     this.elem.classList.add(SUBTITLE_LIST_CLASSNAME);
   }
 
-  render() {
-    const checkIcon = `<svg viewBox="0 0 24 24" class="ltr-1g709ml"><path fill="currentColor" d="M3.707 12.293l-1.414 1.414L8 19.414 21.707 5.707l-1.414-1.414L8 16.586z"></path></svg>`;
+  extractStyle(node){
+    // get class names of all the sub menu elements
+    // so we can apply them to our menu and copy their style
+    let style = { maindiv: null, subdiv: null, h3: null, ul: null, li: null, selected: null }
+    const mainNode = node.querySelector(`div[data-uia=${SUB_MENU_SELECTOR}]`)
 
-    const loadingIcon = `<svg class="ltr-1g709ml" focusable="false" viewBox="0 -5 50 55">
+    //some ugly try blocks because we don't want to crash if only one extraction fails
+    try { style.maindiv = mainNode.firstChild.className } catch {}
+    try { style.subdiv = mainNode.querySelector('li div div').className } catch {}
+    try { style.h3 = mainNode.querySelector('h3').className } catch {}
+    try { style.ul = mainNode.querySelector('ul').className } catch {}
+    try { style.li = mainNode.querySelector('li').className } catch {}
+    try { style.selected = mainNode.querySelector('li[data-uia*="selected"] svg').className.baseVal } catch {} // Netflix fuckery
+
+    return style
+  }
+
+  render() {
+    const checkIcon = `<svg viewBox="0 0 24 24" class=${this.style.selected}><path fill="currentColor" d="M3.707 12.293l-1.414 1.414L8 19.414 21.707 5.707l-1.414-1.414L8 16.586z"></path></svg>`;
+
+    const loadingIcon = `<svg class=${this.style.selected} focusable="false" viewBox="0 -5 50 55">
           <path d="M 6 25 C6 21, 0 21, 0 25 C0 57, 49 59, 50 25 C50 50, 8 55, 6 25" stroke="transparent" fill="red">
             <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite"/>
           </path>
       </svg>`;
 
-    this.elem.innerHTML = `<h3 class="ltr-ccs7uw">Secondary Subtitles</h3>`;
+    this.elem.innerHTML = `<h3 class=${this.style.h3}>Secondary Subtitles</h3>`;
 
     const listElem = document.createElement('ul');
     gSubtitles.forEach((sub, id) => {
       let item = document.createElement('li');
-      item.classList.add('ltr-1rvtjq');
+      item.classList.add(this.style.li);
       if (sub.active) {
         const icon = sub.state === 'LOADING' ? loadingIcon : checkIcon;
         item.classList.add('selected');
-        item.innerHTML = `<div>${icon}<div class="ltr-1oiuwg2">${sub.lang}</div></div>`;
+        item.innerHTML = `<div>${icon}<div class=${this.style.subdiv}>${sub.lang}</div></div>`;
       } else {
-        item.innerHTML = `<div><div class="ltr-1mjiiew">${sub.lang}</div></div>`;
+        item.innerHTML = `<div><div class=${this.style.subdiv}>${sub.lang}</div></div>`;
         item.addEventListener('click', () => {
           activateSubtitle(id);
         });
       }
-      listElem.classList.add('ltr-27aw42');
+      listElem.classList.add(this.style.ul);
       listElem.appendChild(item);
     });
     this.elem.appendChild(listElem);
@@ -510,7 +529,7 @@ class SubtitleMenu {
 const isPopupMenuElement = node => {
   return (
     node.nodeName.toLowerCase() === 'div' &&
-    node.querySelector('div[data-uia="selector-audio-subtitle"]')
+    node.querySelector(`div[data-uia=${SUB_MENU_SELECTOR}]`)
   );
 };
 
@@ -524,12 +543,12 @@ const bodyObserver = new MutationObserver(mutations => {
         // popup menu attached
         if (!node.getElementsByClassName(SUBTITLE_LIST_CLASSNAME).length) {
           if (!gSubtitleMenu) {
-            gSubtitleMenu = new SubtitleMenu();
+            gSubtitleMenu = new SubtitleMenu(node);
             gSubtitleMenu.render();
           }
           node.style.left = "auto";
           node.style.right = "10px";
-          node.querySelector('div[data-uia="selector-audio-subtitle"]').appendChild(gSubtitleMenu.elem);
+          node.querySelector(`div[data-uia=${SUB_MENU_SELECTOR}]`).appendChild(gSubtitleMenu.elem);
         }
       }
     });
@@ -1183,8 +1202,8 @@ class NflxMultiSubsManager {
 
           // For cadmium-playercore-6.0012.183.041.js and later
           gSubtitles = buildSubtitleList(manifest.timedtexttracks);
-          gSubtitleMenu = new SubtitleMenu();
-          gSubtitleMenu.render();
+          //gSubtitleMenu = new SubtitleMenu();
+          //gSubtitleMenu.render();
 
           // select subtitle based on language settings
           console.log('Language mode: ', gRenderOptions.secondaryLanguageMode);
