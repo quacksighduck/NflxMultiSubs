@@ -88,13 +88,7 @@ footer {
 }
 
 .settings-secondary-lang {
-  /*filter: blur(6px) grayscale(100%);*/
   transition: all 1s;
-}
-
-.settings-secondary-lang:hover {
-/*  cursor: not-allowed !important;
-  filter: blur(0);*/
 }
 
 .settings-layout div,
@@ -102,6 +96,7 @@ footer {
   color: hsl(0, 0%, 30%);
   display: inline-block;
   text-align: center;
+  position: relative;
 }
 
 .settings-layout div+div,
@@ -165,11 +160,6 @@ footer {
   cursor: pointer;
 }
 
-.settings-secondary-lang div {
-  position: relative;
-  display: inline-block;
-}
-
 .settings-secondary-lang div span {
   visibility: hidden;
   width: 120px;
@@ -201,6 +191,13 @@ footer {
 .settings-secondary-lang div:hover span{
   visibility: visible;
   opacity: 1;
+}
+
+.settings-secondary-lang #langcode{
+  position: absolute;
+  width: 100%;
+  top: 20%;
+  pointer-events: none;
 }
 
 .font-size-xs { font-size:  9px; }

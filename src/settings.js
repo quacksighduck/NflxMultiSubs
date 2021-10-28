@@ -122,10 +122,12 @@ function renderActiveSettings() {
 
   // secondary language
   const secondaryLanguageId = secondaryLanguagePresets.findIndex(k => (k.secondaryLanguageMode === settings.secondaryLanguageMode));
-  console.log(secondaryLanguageId)
   if (secondaryLanguageId !== -1) {
     elem = document.querySelector(`.settings-secondary-lang > div[data-id="${secondaryLanguageId}"]`);
     elem && elem.classList.add('active');
+
+    if(settings.secondaryLanguageLastUsed)
+      document.getElementById('langcode').innerHTML = settings.secondaryLanguageLastUsed.split('-')[0] // only display language code, not script tag (eg: zh not zh-Hans)
   }
 }
 
