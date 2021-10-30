@@ -853,19 +853,20 @@ class RendererLoop {
 
   _loop() {
     const currentVideoElem = document.querySelector('#appMountPoint video');
+
+    // stop the render loop if there is no videoplayer (e.g.: user is on the homepage)
+    if (!currentVideoElem && !/netflix\..*\/watch/i.test(window.location.href)) {
+      this.stop();
+      window.__NflxMultiSubs.lastMovieId = undefined // clear this in case the same show is started again later
+      return;
+    }
+
     if (currentVideoElem && this.videoElem.src !== currentVideoElem.src) {
       // TODO: do we still need to check for this?
       // some video change episodes by update video src
       // force terminate renderer loop if src changed
-      window.__NflxMultiSubs.rendererLoopDestroy();
-      return;
-    }
-
-    // this script may be loaded while user's at the movie list page,
-    // thus if there's no video playing, we can end the renderer loop
-    // FIXME: doesn't trigger when videoplayer is closed
-    if (!this.videoElem && !/netflix\.com\/watch/i.test(window.location.href)) {
       this.stop();
+      window.__NflxMultiSubs.rendererLoopDestroy();
       return;
     }
 
