@@ -13,7 +13,7 @@ const hookJsonParseAndAddCallback = function(_window) {
       const result = _parse.call(JSON, ...args);
       if (result && result.result && result.result.movieId) {
           const movieId = result.result.movieId
-          console.log(`Intercepted manifest ${movieId}`);
+          //console.log(`Intercepted manifest ${movieId}`);
           window.__NflxMultiSubs.updateManifest(result.result);
       }
       return result;
@@ -35,7 +35,7 @@ hookJsonParseAndAddCallback(window);
 
   history.pushState = ( f => function pushState(state, ...args){
     f.call(history, state, ...args);
-    console.log(`pushState: ${state.url}`);
+    //console.log(`pushState: ${state.url}`);
 
     processStateChange()
   })(history.pushState);
@@ -46,7 +46,7 @@ hookJsonParseAndAddCallback(window);
   // So we also hook history.replaceState to capture this redirect.
   history.replaceState = ( f => function replaceState(state, ...args){
     f.call(history, state, ...args);
-    console.log(`replaceState: ${state.url}`);
+    //console.log(`replaceState: ${state.url}`);
 
     processStateChange()
   })(history.replaceState);
@@ -1116,7 +1116,7 @@ const extractMovieIdFromUrl = () => {
   try {
     const movieIdInUrl = /^\/watch\/(\d+)/.exec(window.location.pathname)[1];
     const movieId = parseInt(movieIdInUrl);
-    console.log(`Movie in URL: ${movieId}`)
+    //console.log(`Movie in URL: ${movieId}`)
     return movieId;
   }
   catch (err) {
@@ -1194,7 +1194,7 @@ class NflxMultiSubsManager {
 
           const movieChanged = manifest.movieId !== this.lastMovieId;
           if (!movieChanged) {
-            console.log(`Ignored: manifest ${manifest.movieId} loaded yet`);
+            //console.log(`Ignored: manifest ${manifest.movieId} already loaded`);
             return;
           }
 
@@ -1287,7 +1287,7 @@ class NflxMultiSubsManager {
 
   updateManifest(manifest) {
     try {
-      console.log(`Manifest: ${manifest.movieId}`);
+      console.log(`Intecerpted manifest: ${manifest.movieId}`);
     }
     catch (err) {
       console.warn('Error:', err);
