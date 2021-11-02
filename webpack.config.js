@@ -1,5 +1,5 @@
 const path = require('path');
-
+const PACKAGE = require('./package.json');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -41,23 +41,24 @@ const configs = browsers.map(browser => {
 
     plugins: [
       new CleanWebpackPlugin(),
-      new CopyWebpackPlugin([
+      new CopyWebpackPlugin({
+        patterns: [
         {
           from: path.join(kSourceDir, 'manifest.json'),
           transform: (content, path) => Buffer.from(JSON.stringify({
-            short_name: process.env.npm_package_name,
-            description: process.env.npm_package_description,
-            version: process.env.npm_package_version,
+            short_name: PACKAGE.name,
+            description: PACKAGE.description,
+            version: PACKAGE.version,
             ...JSON.parse(content.toString('utf-8'))
           }, null, '\t')),
         },
         {
-          from: path.join(kSourceDir, '*.+(html|png|css)'),
-          flatten: true,
+          from: path.join(kSourceDir, '*.+(html|png|css)').replace(/\\/g, "/"),
+          to: "[name][ext]",
         },
-      ]),
+      ]}),
       new webpack.DefinePlugin({
-        VERSION: JSON.stringify(process.env.npm_package_version),
+        VERSION: JSON.stringify(PACKAGE.version),
         BROWSER: JSON.stringify(browser),
       }),
     ],
