@@ -81,6 +81,6 @@ Problems?
 - If you have a request you can open an issue for consideration (please put [Feature Request] in the title)
 
 
-Licenses
+License
 --------
-MIT. Refer to [LICENSE.md](LICENSE.md) for details
+MIT. Original by [Dan Chen](https://github.com/dannvix), forked and maintained by [Gert Mertes](https://github.com/gmertes).
