@@ -1215,9 +1215,12 @@ class NflxMultiSubsManager {
             default:
             case 'audio':
               try {
-                const defaultAudioId = manifest.defaultTrackOrderList[0].audioTrackId;
-                const defaultAudioTrack = manifest.audio_tracks.find(t => t.id == defaultAudioId);
-                const defaultAudioLanguage = defaultAudioTrack.language;
+                /* Note 2021/11/04 :
+                    manifest.defaultTrackOrderList doesn't exist anymore. We can use the audio track's isNative flag instead.
+                    There is also manifest.recommendedMedia.audioTrackId , but it just points to the track with isNative == true. */
+                //const defaultAudioId = manifest.defaultTrackOrderList[0].audioTrackId;
+                const defaultAudioTrack = manifest.audio_tracks.find(t => t.isNative == true);
+                const defaultAudioLanguage = (defaultAudioTrack) ? defaultAudioTrack.language : manifest.audio_tracks[0].language; // fall back to first track if isNative fails
                 console.log(`Default audio track language: ${defaultAudioLanguage}`);
                 const autoSubtitleId = gSubtitles.findIndex(t => t.bcp47 == defaultAudioLanguage);
                 if (autoSubtitleId >= 0) {
