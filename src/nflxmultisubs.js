@@ -60,6 +60,7 @@ let gSubtitles = [],
 let gMsgPort, gRendererLoop;
 let gVideoRatio = 1080 / 1920;
 let gRenderOptions = Object.assign({}, kDefaultSettings);
+let gSecondaryOffset = 0; // used to move secondary subs if primary subs overflow the screen edge
 
 (() => {
   // connect with background script immediately so we can capture settings before playback (used for language mode)
@@ -380,7 +381,7 @@ class ImageSubtitle extends SubtitleBase {
           const { left, top, width, height } = line;
           const [newWidth, newHeight] = [width * scale, height * scale];
           const newLeft = left + 0.5 * (width - newWidth);
-          const newTop = top <= centerLine ? upperBaseline : lowerBaseline;
+          const newTop = top <= centerLine ? upperBaseline + gSecondaryOffset : lowerBaseline;
 
           const src = URL.createObjectURL(blob);
           img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', src);
@@ -684,11 +685,22 @@ class PrimaryImageTransformer {
         // large scale multi-line subs sometimes fall outside of the screen when they are placed at the top,
         // caused by newTop becoming negative (because newHeight is based on the subs scale)
         // subtracting newHeight/2 prevents this and makes it so that multiline subs are displayed at roughly
-        // the same location as the single line subs when this happens
-        var newTop =
-          top <= centerLine
-            ? (upperBaseline - newHeight <= 0 ? upperBaseline - newHeight/2 : upperBaseline - newHeight)
-            : lowerBaseline - newHeight;
+        // the same location as the single line subs when this happens.
+        // gSecondaryOffset moves the secondary subtitles with it
+        let newTop;
+
+        if(top <= centerLine){
+          if(upperBaseline - newHeight <= 0){
+            newTop = upperBaseline - newHeight/2
+            gSecondaryOffset = newHeight/2
+          }else{
+            newTop = upperBaseline - newHeight
+            gSecondaryOffset = 0
+          }
+        }else{
+          newTop = lowerBaseline - newHeight
+          gSecondaryOffset = 0
+        }
 
         // if it somehow still ends up negative just hard-constrain it
         // (we arbitrarily choose 10 to give it some space from the screen edge)
