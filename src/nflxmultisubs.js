@@ -114,11 +114,12 @@ let gSecondaryOffset = 0; // used to move secondary subs if primary subs overflo
 ////////////////////////////////////////////////////////////////////////////////
 
 class SubtitleBase {
-  constructor(lang, bcp47, urls) {
+  constructor(lang, bcp47, urls, isCaption) {
     this.state = 'GENESIS';
     this.active = false;
     this.lang = lang;
     this.bcp47 = bcp47;
+    this.isCaption = isCaption;
     this.urls = urls;
     this.extentWidth = undefined;
     this.extentHeight = undefined;
@@ -410,9 +411,9 @@ class SubtitleFactory {
     const bcp47 = track.language;
 
     if (isImageBased) {
-      return this._buildImageBased(track, lang, bcp47);
+      return this._buildImageBased(track, lang, bcp47, isCaption);
     }
-    return this._buildTextBased(track, lang, bcp47);
+    return this._buildTextBased(track, lang, bcp47, isCaption);
   }
 
   static isNoneTrack(track) {
@@ -432,14 +433,14 @@ class SubtitleFactory {
     return false;
   }
 
-  static _buildImageBased(track, lang, bcp47) {
+  static _buildImageBased(track, lang, bcp47, isCaption) {
     const maxHeight = Math.max(...Object.values(track.ttDownloadables).map(d => d.height));
     const d = Object.values(track.ttDownloadables).find(d => d.height === maxHeight);
     const urls = Object.values(d.downloadUrls);
-    return new ImageSubtitle(lang, bcp47, urls);
+    return new ImageSubtitle(lang, bcp47, urls, isCaption);
   }
 
-  static _buildTextBased(track, lang, bcp47) {
+  static _buildTextBased(track, lang, bcp47, isCaption) {
     const targetProfile = 'dfxp-ls-sdh';
     const d = track.ttDownloadables[targetProfile];
     if (!d) {
@@ -447,7 +448,7 @@ class SubtitleFactory {
       return null;
     }
     const urls = Object.values(d.downloadUrls);
-    return new TextSubtitle(lang, bcp47, urls);
+    return new TextSubtitle(lang, bcp47, urls, isCaption);
   }
 }
 
@@ -577,6 +578,8 @@ activateSubtitle = id => {
     sub.activate().then(() => {gSubtitleMenu && gSubtitleMenu.render();});
 
     gRenderOptions.secondaryLanguageLastUsed = sub.bcp47;
+    gRenderOptions.secondaryLanguageLastUsedIsCaption = sub.isCaption;
+
     if (BROWSER === 'chrome') {
       if (gMsgPort)
         gMsgPort.postMessage({settings: gRenderOptions});
@@ -1250,7 +1253,10 @@ class NflxMultiSubsManager {
               if (gRenderOptions.secondaryLanguageLastUsed){
                 console.log('Activating last sub language', gRenderOptions.secondaryLanguageLastUsed)
                 try{
-                  const lastSubtitleId = gSubtitles.findIndex(t => t.bcp47 == gRenderOptions.secondaryLanguageLastUsed);
+                  let lastSubtitleId = gSubtitles.findIndex(t => (t.bcp47 == gRenderOptions.secondaryLanguageLastUsed && t.isCaption == gRenderOptions.secondaryLanguageLastUsedIsCaption));
+                  // if can't match CC type, fall back to language only
+                  if (lastSubtitleId == -1)
+                    lastSubtitleId = gSubtitles.findIndex(t => t.bcp47 == gRenderOptions.secondaryLanguageLastUsed);
                   if (lastSubtitleId >= 0) {
                     console.log(`Subtitle #${lastSubtitleId} enabled`);
                     activateSubtitle(lastSubtitleId);
