@@ -1,9 +1,12 @@
 <p align="center"><a href="README.md">English</a>, <a href="README_cn.md">中文</a></p>
 
-
 <img src="docs/icon.png?raw=true" height="48"> NflxMultiSubs
 ============================================================
-Best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix! 
+![Chrome users](https://img.shields.io/chrome-web-store/users/jepfhfjlkgobooomdgpcjikalfpcldmm?label=Chrome%20users)
+![Firefox users](https://img.shields.io/amo/users/nflxmultisubs-2021?label=Firefox%20users)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=5GY9A82PFY38W&no_recurring=1&currency_code=EUR)
+
+The best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix! 
 
 This repository is updated for 2021 with a fix for the Netflix redesign and other bug fixes and improvements.
 
@@ -17,10 +20,21 @@ This repository is updated for 2021 with a fix for the Netflix redesign and othe
 Features
 --------
 - Enable secondary subtitles in all languages (incl. image-based subtitles like Japanese, Chinese, Russian, …)
-- Smart selection on secondary subtitles: automatically switch to Japanese for Japanese anime, English for US TV shows
+- Smart selection on secondary subtitles. Choose between 3 subtitle activation modes: disabled; automatically match subtitle language to audio language; or remember the last selected language.
 - Seamless integration with native Netflix player UI -- switch languages in place
 - Adjust playback speed (pressing key `[` and `]`)
 - Open source!!
+
+Installation
+-----
+Chrome: https://chrome.google.com/webstore/detail/jepfhfjlkgobooomdgpcjikalfpcldmm </br>
+Firefox: https://addons.mozilla.org/firefox/addon/nflxmultisubs-2021
+
+See it in Action
+----------------
+![Bilingual Subtitles with zh-cn/en](docs/2021_zh-en.jpg?raw=true)
+![Intergrated in original menu](docs/2021_popup-menu.jpg?raw=true)
+![Settings menu](docs/2021_settings.jpg?raw=true)
 
 Build
 -----
@@ -32,23 +46,11 @@ npm install
 npm run build
 ```
 
-How to manually install the extension
------
-See [INSTALL.md](INSTALL.md) for instructions.
-
-See it in Action
-----------------
-![Bilingual Subtitles with zh-cn/en](docs/2021_zh-en.jpg?raw=true)
-![Intergrated in original menu](docs/2021_popup-menu.jpg?raw=true)
-![Settings menu](docs/2021_settings.jpg?raw=true)
-
-
 Known Issues
 -------------------------
 - Wait for the Netflix home page to finish loading completely before starting a show/movie.
 - Refresh the page if the secondary sub list is empty.
-- This extension could conflict with other Netflix-related extensions. If you encounter any problem, try to disable some of them
-- This extension could conflict with ad blockers (e.g. [uBlock Origin](https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm)); Please add `netflix.com` into their whitelists or disable the ad blockers
+- This extension could conflict with other Netflix-related extensions (but not [NflxIntroSkip](https://github.com/gmertes/NflxIntroSkip)! :D). If you encounter any problem, try to disable some of them
 - RTL (right-to-left) text-based subtitles are not ready yet
 - This extension and the developers are not affiliated with Netflix, Inc; All rights belong to their owners
 
@@ -58,28 +60,30 @@ Problems?
 ### The secondary subtitles list is empty or subs aren't showing up
 - Subs will show up after a Refresh (F5).
 
-### Netflix player keeps loading, and error messages occurs afterward
-- Try hitting Refresh (F5) few times
-- Loading could be interfered by ad blockers -- add `netflix.com` to their whitelist or disable the ad blockers temporarily
-
 ### Large gap between main subtitle and secondary subtitle
-- Sometimes this happens only when the controls bar is active -- just wait until the controls hide
+- This happens only when the controls bar is active -- just wait until the controls hide
 
-### Main subtitle moved to center of the visible region
-- Sometimes this happens only when the controls bar is active -- just wait until the controls hide
-
-### Only available in Chrome for desktop?
+### Only available in Chrome/Firefox for desktop?
 - Yup -- mobile devices, smart TVs, Apple TV, Chromecast, … are not supported
-- No plan to support those platforms -- request Netflix to deliver official supports ;-)
 
 ### Could I load subtitles from other country?
 - This extension respects Netflix rules, hence we only support all official subtitles available in your country
-- Uploading custom subtitles won't be supported
 
 ### Feature request: __________ ?
 - This extension does one thing and does it well -- great experience with bilingual subtitles support
 - If you have a request you can open an issue for consideration (please put [Feature Request] in the title)
 
+Donate
+----
+The extension is and will remain free. If you like and want to support my work, donations are welcome.
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=5GY9A82PFY38W&no_recurring=1&currency_code=EUR)
+
+BTC: `bc1qx8duq3526zhc2md724ym70qgd4wgadj5dqfuvr`
+
+ETH: `0x02635a2ef80887B0AEBa5a8282AeFAEA401DFCf9`
+
+XLM: `GB5Y7TVH7OBI7MFAT26RZ4TCZRDMVNWXLQH3LPTI2RRB22PRHSDR25BH`
 
 License
 --------
