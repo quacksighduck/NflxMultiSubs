@@ -11,11 +11,12 @@ The best ever Chrome/Firefox extension to unleash bilingual subtitles on Netflix
 This repository is updated for 2021 with a fix for the Netflix redesign and other bug fixes and improvements.
 
 [<img src="https://user-images.githubusercontent.com/13658335/138092194-303708fb-9a4e-4e3f-a1dc-74baff1e45c9.png" height="59"/>](https://chrome.google.com/webstore/detail/jepfhfjlkgobooomdgpcjikalfpcldmm)
-[<img src="https://user-images.githubusercontent.com/13658335/138086366-8deee659-16c3-4621-b3f0-eaf4cb6ed9ba.png" height="60"/>](https://addons.mozilla.org/en-GB/firefox/addon/nflxmultisubs-2021)
+[<img src="https://user-images.githubusercontent.com/13658335/138086366-8deee659-16c3-4621-b3f0-eaf4cb6ed9ba.png" height="60"/>](https://addons.mozilla.org/firefox/addon/nflxmultisubs-2021)
+[<img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-mac-app-store.svg" height="60"/>](https://apps.apple.com/app/nflxmultisubs/id1594059167)
 
-#### UPDATE: We are now on the Chrome and Firefox stores under the name NflxMultiSubs 2021 🥳🥳🥳 <br /> Click the browser badge to install.
+#### We are now on the Chrome and Firefox stores under the name NflxMultiSubs 2021 🥳🥳🥳 <br /> An Apple Mac version for Safari with basic functionality is also available. Click on the badge to install.
 
-**If you manually installed the extension before, please remove it and reinstall from the store.**
+**If you installed the extension from the zip before, please remove it and reinstall from the store.**
 
 Features
 --------
@@ -28,7 +29,9 @@ Features
 Installation
 -----
 Chrome: https://chrome.google.com/webstore/detail/jepfhfjlkgobooomdgpcjikalfpcldmm </br>
-Firefox: https://addons.mozilla.org/firefox/addon/nflxmultisubs-2021
+Firefox: https://addons.mozilla.org/firefox/addon/nflxmultisubs-2021 </br>
+
+Safari Mac port maintained by [WingCH](https://github.com/WingCH) (without customisable settings for now): </br> https://apps.apple.com/app/nflxmultisubs/id1594059167
 
 See it in Action
 ----------------
