@@ -499,15 +499,15 @@ class SubtitleMenu {
   }
 
   render() {
-    const checkIcon = `<svg viewBox="0 0 24 24" class=${this.style.selected}><path fill="currentColor" d="M3.707 12.293l-1.414 1.414L8 19.414 21.707 5.707l-1.414-1.414L8 16.586z"></path></svg>`;
+    const checkIcon = `<svg viewBox="0 0 24 24" class="${this.style.selected}"><path fill="currentColor" d="M3.707 12.293l-1.414 1.414L8 19.414 21.707 5.707l-1.414-1.414L8 16.586z"></path></svg>`;
 
-    const loadingIcon = `<svg class=${this.style.selected} focusable="false" viewBox="0 -5 50 55">
+    const loadingIcon = `<svg class="${this.style.selected}" focusable="false" viewBox="0 -5 50 55">
           <path d="M 6 25 C6 21, 0 21, 0 25 C0 57, 49 59, 50 25 C50 50, 8 55, 6 25" stroke="transparent" fill="red">
             <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s" repeatCount="indefinite"/>
           </path>
       </svg>`;
 
-    this.elem.innerHTML = `<h3 class=${this.style.h3}>Secondary Subtitles</h3>`;
+    this.elem.innerHTML = `<h3 class="${this.style.h3}">Secondary Subtitles</h3>`;
 
     const listElem = document.createElement('ul');
     gSubtitles.forEach((sub, id) => {
@@ -516,9 +516,9 @@ class SubtitleMenu {
       if (sub.active) {
         const icon = sub.state === 'LOADING' ? loadingIcon : checkIcon;
         item.classList.add('selected');
-        item.innerHTML = `<div>${icon}<div class=${this.style.subdiv}>${sub.lang}</div></div>`;
+        item.innerHTML = `<div>${icon}<div class="${this.style.subdiv}">${sub.lang}</div></div>`;
       } else {
-        item.innerHTML = `<div><div class=${this.style.subdiv}>${sub.lang}</div></div>`;
+        item.innerHTML = `<div><div class="${this.style.subdiv}">${sub.lang}</div></div>`;
         item.addEventListener('click', () => {
           activateSubtitle(id);
         });
