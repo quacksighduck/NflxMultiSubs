@@ -249,7 +249,8 @@ class TextSubtitle extends SubtitleBase {
   _render(lines, options) {
     // `em` as font size was not so good -- some other extensions change the em (?)
     // these magic numbers looks good on my screen XD
-    const fontSize = Math.sqrt(this.extentWidth / 1600) * 28;
+    // const fontSize = Math.sqrt(this.extentWidth / 1600) * 28;
+    const fontSize = Math.ceil(this.extentHeight / 30);
 
     const textContent = lines.map(line => line.text).join('\n');
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
