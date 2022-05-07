@@ -532,7 +532,11 @@ class SubtitleMenu {
       listElem.classList.add(this.style.ul);
       listElem.appendChild(item);
     });
-    this.elem.appendChild(listElem);
+    const listWrapper = document.createElement('div');
+    listWrapper.style.overflowY = 'auto';
+    listWrapper.style.overflowX = 'hidden';
+    listWrapper.appendChild(listElem);
+    this.elem.appendChild(listWrapper);
   }
 }
 
