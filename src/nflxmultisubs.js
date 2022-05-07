@@ -765,10 +765,10 @@ class PrimaryTextTransformer {
     const style = parentNode.querySelector('style');
     if (!style) return;
 
-    const textSpan = container.querySelector('span');
+    const textSpan = Array.from(container.querySelectorAll('span'));
     if (!textSpan) return;
 
-    const fontSize = parseInt(textSpan.style.fontSize);
+    const fontSize = parseInt(textSpan.find(t => t.style.fontSize).style.fontSize);
     if (!fontSize) return;
 
     const options = gRenderOptions;
