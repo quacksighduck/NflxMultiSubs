@@ -455,7 +455,7 @@ class SubtitleFactory {
     const targetProfile = 'dfxp-ls-sdh';
     const d = track.ttDownloadables[targetProfile];
     if (!d) {
-      console.error(`Cannot find "${targetProfile}" for ${lang}`);
+      console.debug(`Cannot find "${targetProfile}" for ${lang}`);
       return null;
     }
     const urls = Object.values(d.downloadUrls);
@@ -471,7 +471,8 @@ const buildSubtitleList = textTracks => {
   // sorted by language in alphabetical order (to align with official UI)
   const subs = textTracks
     .filter(t => !SubtitleFactory.isNoneTrack(t))
-    .map(t => SubtitleFactory.build(t));
+    .map(t => SubtitleFactory.build(t))
+    .filter(t => t !== null);
   return subs.concat(dummy);
 };
 
