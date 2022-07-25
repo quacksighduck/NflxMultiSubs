@@ -225,7 +225,7 @@ class TextSubtitle extends SubtitleBase {
               let extractTextRecur = parentNode => {
                 [].forEach.call(parentNode.childNodes, node => {
                   if (node.nodeType === Node.ELEMENT_NODE)
-                    if (node.nodeName.toLowerCase() === 'br') text += ' ';
+                    if (node.nodeName.toLowerCase() === 'br') text += '\n';
                     else extractTextRecur(node);
                   else if (node.nodeType === Node.TEXT_NODE)
                     text += node.nodeValue + ' ';
@@ -252,7 +252,10 @@ class TextSubtitle extends SubtitleBase {
     // const fontSize = Math.sqrt(this.extentWidth / 1600) * 28;
     const fontSize = Math.ceil(this.extentHeight / 30);
 
-    const textContent = lines.map(line => line.text).join('\n');
+    // .join('\n').split('\n') seems redundant but it's done because speaker-based captions will not contain a \n to
+    // indicate line breaks, instead they will come as individual elements in the lines array. Regular captions will
+    // come as a single element with a \n. So this is to make sure all caption formats are split into lines correctly.
+    const textContent = lines.map(line => line.text).join('\n').split('\n');
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttributeNS(null, 'text-anchor', 'middle');
     text.setAttributeNS(null, 'alignment-baseline', 'hanging');
@@ -275,7 +278,17 @@ class TextSubtitle extends SubtitleBase {
     text.style.fontFamily = 'Arial, Helvetica';
     text.style.fill = options.secondaryTextColor;
     text.style.stroke = 'black';
-    text.textContent = textContent;
+    // text.textContent = textContent;
+
+    // tspan for line breaks
+    textContent.forEach((line, i) => {
+      const tspan = document.createElementNS("http://www.w3.org/2000/svg","tspan");
+      tspan.setAttributeNS(null, 'x', this.extentWidth * 0.5);
+      if (i > 0) tspan.setAttributeNS(null, 'dy', text.style.fontSize);
+      tspan.textContent = line;
+      text.appendChild(tspan);
+    });
+
     return [text];
   }
 }
