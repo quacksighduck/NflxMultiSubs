@@ -1371,3 +1371,19 @@ window.__NflxMultiSubs = nflxMultiSubsManager;  // interface between us and the 
 // control video playback rate
 const playbackRateController = new PlaybackRateController();
 playbackRateController.activate();
+
+window.addEventListener('keyup', (event) => {
+  // toggle subtitles visibility with 'v'
+  if (event.code === 'KeyV') {
+    const primary = document.querySelector('.nflxmultisubs-primary-wrapper');
+    const secondary = document.querySelector('.nflxmultisubs-subtitle-wrapper');
+
+    if (!primary || !secondary)
+      return;
+
+    const visible = (window.getComputedStyle(primary).visibility === 'visible') ||
+        (window.getComputedStyle(secondary).visibility === 'visible');
+
+    primary.style.visibility = secondary.style.visibility = (visible) ? 'hidden' : 'visible';
+  }
+}, true);
