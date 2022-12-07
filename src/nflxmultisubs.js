@@ -460,7 +460,12 @@ class SubtitleFactory {
         return -1;
     }));
     const d = Object.values(track.ttDownloadables).find(d => d.height === maxHeight);
-    const urls = d.urls.map(t => t.url);
+    let urls;
+    if (d.downloadUrls) {
+      urls = Object.values(d.downloadUrls);
+    } else {
+      urls = d.urls.map(t => t.url);
+    }
     return new ImageSubtitle(lang, bcp47, urls, isCaption);
   }
 
@@ -471,7 +476,12 @@ class SubtitleFactory {
       console.debug(`Cannot find "${targetProfile}" for ${lang}`);
       return null;
     }
-    const urls = d.urls.map(t => t.url);
+    let urls;
+    if (d.downloadUrls) {
+      urls = Object.values(d.downloadUrls);
+    } else {
+      urls = d.urls.map(t => t.url);
+    }
     return new TextSubtitle(lang, bcp47, urls, isCaption);
   }
 }
