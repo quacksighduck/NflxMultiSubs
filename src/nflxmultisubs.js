@@ -205,6 +205,18 @@ class DummySubtitle extends SubtitleBase {
   }
 }
 
+// subtitle with no download urls
+class DehydratedSubtitle extends SubtitleBase {
+  constructor(...args) {
+    super(...args);
+  }
+
+  activate() {
+    this.active = true;
+    return Promise.resolve();
+  }
+}
+
 class TextSubtitle extends SubtitleBase {
   constructor(...args) {
     super(...args);
@@ -419,6 +431,9 @@ class SubtitleFactory {
     const lang = track.languageDescription + (isCaption ? ' [CC]' : '');
     const bcp47 = track.language;
 
+    if (!track.hydrated) {
+      return new DehydratedSubtitle(lang, bcp47);
+    }
     if (isImageBased) {
       return this._buildImageBased(track, lang, bcp47, isCaption);
     }
@@ -499,6 +514,17 @@ const buildSubtitleList = textTracks => {
   return subs.concat(dummy);
 };
 
+// textTracks: manifest.textTracks
+const updateSubtitleList = (textTracks, textTrackId) => {
+  const track = textTracks.find(t => t.new_track_id == textTrackId),
+    sub = SubtitleFactory.build(track),
+    index = gSubtitles.findIndex(s => s.lang == sub.lang);
+  if (gSubtitles[index] instanceof DehydratedSubtitle && sub !== null) {
+    gSubtitles[index] = sub;
+    gSubtitleMenu && gSubtitleMenu.render();
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 const SUBTITLE_LIST_CLASSNAME = 'nflxmultisubs-subtitle-list';
@@ -541,6 +567,7 @@ class SubtitleMenu {
 
     const listElem = document.createElement('ul');
     gSubtitles.forEach((sub, id) => {
+      if (sub instanceof DehydratedSubtitle) return;
       let item = document.createElement('li');
       item.classList.add(this.style.li);
       if (sub.active) {
@@ -1251,7 +1278,8 @@ class NflxMultiSubsManager {
 
           const movieChanged = manifest.movieId !== this.lastMovieId;
           if (!movieChanged) {
-            //console.log(`Ignored: manifest ${manifest.movieId} already loaded`);
+            updateSubtitleList(manifest.timedtexttracks, manifest.recommendedMedia.timedTextTrackId);
+            console.log(`Manifest ${manifest.movieId} updated`);
             return;
           }
 
