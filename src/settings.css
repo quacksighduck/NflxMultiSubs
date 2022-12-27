@@ -10,6 +10,7 @@ html, body {
   padding: 0;
   outline: 0;
   user-select: none;
+  overflow: hidden;
 }
 
 .wrapper {
@@ -240,6 +241,28 @@ footer {
   border-width: 5px;
   border-style: solid;
   border-color: #5e5e5e transparent transparent transparent;
+}
+
+#primary-color-ff .picker_wrapper {
+  width: 230px;
+  left: -100px;
+  margin-top: 5px;
+}
+
+#secondary-color-ff .picker_wrapper {
+  width: 230px;
+  left: -100px;
+  margin-bottom: 60px;
+}
+
+#primary-color-ff .picker_arrow,
+#secondary-color-ff .picker_arrow {
+  visibility: hidden;
+}
+
+#primary-color-ff .picker_wrapper.popup,
+#secondary-color-ff .picker_wrapper.popup {
+  box-shadow: 0 0 10px 1px rgb(0 0 0 / 80%);
 }
 
 .font-size-xs { font-size:  9px; }

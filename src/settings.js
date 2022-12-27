@@ -1,9 +1,31 @@
 let settings = {};
+let primaryPicker, secondaryPicker;
+
+if (BROWSER === 'firefox') {
+  const Picker = require('vanilla-picker');
+
+  primaryPicker = new Picker({
+    popup: 'bottom',
+    color: '#ffffff',
+    alpha: false,
+    editor: false
+  });
+
+  secondaryPicker = new Picker({
+    popup: 'top',
+    color: '#ffffff',
+    alpha: false,
+    editor: false
+  });
+}
 
 const port = chrome.runtime.connect({ name: 'settings' });
 port.onMessage.addListener((msg) => {
   settings = msg.settings || settings;
   renderActiveSettings();
+
+  primaryPicker?.setColor(settings.primaryTextColor || "#ffffff", true);
+  secondaryPicker?.setColor(settings.secondaryTextColor || "#ffffff", true);
 });
 
 // -----------------------------------------------------------------------------
@@ -214,15 +236,29 @@ window.addEventListener('load', evt => {
     div.addEventListener('click', evt => updateSecondaryFontSize(fontSizeId), false);
   });
 
-  const primaryColorField = document.getElementById('primary-color')
+  const primaryColorField = document.getElementById('primary-color');
   primaryColorField.onchange = evt => {
-    updatePrimaryColor(evt.target.value)
+    updatePrimaryColor(evt.target.value);
   }
 
-  const secondaryColorField = document.getElementById('secondary-color')
+  primaryPicker?.setOptions({
+    parent: document.getElementById('primary-color-ff'),
+    onChange: color => {
+      updatePrimaryColor(color.hex.slice(0, 7));
+    }
+  });
+
+  const secondaryColorField = document.getElementById('secondary-color');
   secondaryColorField.onchange = evt => {
-    updateSecondaryColor(evt.target.value, false)
+    updateSecondaryColor(evt.target.value);
   }
+
+  secondaryPicker?.setOptions({
+    parent: document.getElementById('secondary-color-ff'),
+    onChange: color => {
+      updateSecondaryColor(color.hex.slice(0, 7));
+    }
+  });
 
   const secondaryLanguage = document.querySelectorAll('.settings-secondary-lang > div');
   [].forEach.call(secondaryLanguage, div => {
