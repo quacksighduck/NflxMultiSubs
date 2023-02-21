@@ -851,7 +851,7 @@ class PrimaryTextTransformer {
     // FIXME: dirty transform & magic offets
     // we out run the official player, so the primary text-based subtitles
     // does not move automatically when the navs are active
-    newTop += controlsActive ? -120 : 0;
+    newTop += controlsActive ? -100 : 0;
 
     if (containers.length == 1){
       style.textContent +=
@@ -1031,7 +1031,7 @@ class RendererLoop {
   _getControlsActive() {
     // FIXME: better solution to handle different versions of Netflix web player UI
     // "Neo Style" refers to the newer version as in 2018/07
-    let controlsElem = document.querySelector('.controls'),
+    let controlsElem = document.querySelector('.controls, div[data-uia="controls-standard"], .watch-video--bottom-controls-container'),
       neoStyle = false;
     if (!controlsElem) {
       controlsElem = document.querySelector('.PlayerControlsNeo__layout');
@@ -1050,7 +1050,7 @@ class RendererLoop {
         'PlayerControlsNeo__layout--inactive'
       );
     }
-    return controlsElem.classList.contains('active');
+    return controlsElem !== null;
   }
 
   // @returns {boolean} Successed?
@@ -1069,17 +1069,20 @@ class RendererLoop {
     // NOTE: we cannot put `primaryImageSubSvg` into instance state,
     // because there are multiple instance of the SVG and they're switched
     // when the langauge of primary subtitles is switched.
+    const force = this.lastControlsActive !== active;
     const primaryImageSubSvg = document.querySelector(
       '.image-based-subtitles svg'
     );
     if (primaryImageSubSvg) {
-      this.primaryImageTransformer.transform(primaryImageSubSvg, active, dirty);
+      this.primaryImageTransformer.transform(primaryImageSubSvg, active, dirty || force);
     }
 
     const primaryTextSubDiv = document.querySelector('.player-timedtext');
     if (primaryTextSubDiv) {
-      this.primaryTextTransformer.transform(primaryTextSubDiv, active, dirty);
+      this.primaryTextTransformer.transform(primaryTextSubDiv, active, dirty || force);
     }
+
+    this.lastControlsActive = active;
   }
 
   _clearSecondarySubtitles() {
