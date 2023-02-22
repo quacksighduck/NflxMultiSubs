@@ -1413,9 +1413,9 @@ window.__NflxMultiSubs = nflxMultiSubsManager;  // interface between us and the 
 const playbackRateController = new PlaybackRateController();
 playbackRateController.activate();
 
-window.addEventListener('keyup', (event) => {
+window.addEventListener('keydown', (event) => {
   // toggle subtitles visibility with 'v'
-  if (event.code === 'KeyV') {
+  if (event.key.toLowerCase() === 'v') {
     const primary = document.querySelector('.nflxmultisubs-primary-wrapper');
     const secondary = document.querySelector('.nflxmultisubs-subtitle-wrapper');
 
