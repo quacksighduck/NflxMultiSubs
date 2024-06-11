@@ -7,16 +7,15 @@ const PlaybackRateController = require('./playback-rate-controller');
 
 // Hook JSON.parse() and attempt to intercept the manifest
 // For cadmium-playercore-6.0022.710.042.js and later
-const hookJsonParseAndAddCallback = function(_window) {
+const hookJsonParseAndAddCallback = function (_window) {
   const _parse = JSON.parse;
   _window.JSON.parse = (...args) => {
-      const result = _parse.call(JSON, ...args);
-      if (result && result.result && result.result.movieId) {
-          const movieId = result.result.movieId
-          //console.log(`Intercepted manifest ${movieId}`);
-          window.__NflxMultiSubs.updateManifest(result.result);
-      }
-      return result;
+    const result = _parse.call(JSON, ...args);
+    if (result && result.result && result.result.movieId) {
+      const movieId = result.result.movieId;
+      window.__NflxMultiSubs.updateManifest(result.result);
+    }
+    return result;
   };
 };
 hookJsonParseAndAddCallback(window);
@@ -33,9 +32,8 @@ hookJsonParseAndAddCallback(window);
     nflxMultiSubsManager.activateManifest(movieIdInUrl);
   }
 
-  history.pushState = ( f => function pushState(state, ...args){
+  history.pushState = (f => function pushState(state, ...args) {
     f.call(history, state, ...args);
-    //console.log(`pushState: ${state.url}`);
 
     processStateChange()
   })(history.pushState);
@@ -44,9 +42,8 @@ hookJsonParseAndAddCallback(window);
   // This happens when there is a server-side redirect after starting playback, which doesn't trigger the pushState hook.
   // For example, a redirect happens after you click on a show thumbnail to start it instead of the play icon.
   // So we also hook history.replaceState to capture this redirect.
-  history.replaceState = ( f => function replaceState(state, ...args){
+  history.replaceState = (f => function replaceState(state, ...args) {
     f.call(history, state, ...args);
-    //console.log(`replaceState: ${state.url}`);
 
     processStateChange()
   })(history.replaceState);
@@ -88,16 +85,16 @@ let gSecondaryOffset = 0; // used to move secondary subs if primary subs overflo
 
   if (BROWSER === 'firefox') {
     window.addEventListener(
-        'message',
-        evt => {
-          if (!evt.data || evt.data.namespace !== 'nflxmultisubs') return;
+      'message',
+      evt => {
+        if (!evt.data || evt.data.namespace !== 'nflxmultisubs') return;
 
-          if (evt.data.action === 'apply-settings' && evt.data.settings) {
-            gRenderOptions = Object.assign({}, evt.data.settings);
-            gRendererLoop && gRendererLoop.setRenderDirty();
-          }
-        },
-        false
+        if (evt.data.action === 'apply-settings' && evt.data.settings) {
+          gRenderOptions = Object.assign({}, evt.data.settings);
+          gRendererLoop && gRendererLoop.setRenderDirty();
+        }
+      },
+      false
     );
 
     try {
@@ -176,7 +173,7 @@ class SubtitleBase {
       this.urls.map(u => u.substr(0, 24)));
 
     return Promise.any(
-      this.urls.map(url => fetch(new Request(url), {method: 'HEAD'}))
+      this.urls.map(url => fetch(new Request(url), { method: 'HEAD' }))
     ).then(r => {
       const url = r.url;
       console.debug(`Fastest: ${url.substr(0, 24)}`);
@@ -259,9 +256,7 @@ class TextSubtitle extends SubtitleBase {
   }
 
   _render(lines, options) {
-    // `em` as font size was not so good -- some other extensions change the em (?)
     // these magic numbers looks good on my screen XD
-    // const fontSize = Math.sqrt(this.extentWidth / 1600) * 28;
     const fontSize = Math.ceil(this.extentHeight / 30);
 
     // .join('\n').split('\n') seems redundant but it's done because speaker-based captions will not contain a \n to
@@ -290,11 +285,10 @@ class TextSubtitle extends SubtitleBase {
     text.style.fontFamily = 'Arial, Helvetica';
     text.style.fill = options.secondaryTextColor;
     text.style.stroke = 'black';
-    // text.textContent = textContent;
 
     // tspan for line breaks
     textContent.forEach((line, i) => {
-      const tspan = document.createElementNS("http://www.w3.org/2000/svg","tspan");
+      const tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
       tspan.setAttributeNS(null, 'x', this.extentWidth * 0.5);
       if (i > 0) tspan.setAttributeNS(null, 'dy', text.style.fontSize);
       tspan.textContent = line;
@@ -469,7 +463,7 @@ class SubtitleFactory {
 
   static _buildImageBased(track, lang, bcp47, isCaption) {
     const maxHeight = Math.max(...Object.values(track.ttDownloadables).map(d => {
-      if(d.height)
+      if (d.height)
         return d.height;
       else
         return -1;
@@ -537,19 +531,20 @@ class SubtitleMenu {
     this.elem.classList.add(SUBTITLE_LIST_CLASSNAME);
   }
 
-  extractStyle(node){
+  extractStyle(node) {
     // get class names of all the sub menu elements
     // so we can apply them to our menu and copy their style
-    let style = { maindiv: null, subdiv: null, h3: null, ul: null, li: null, selected: null }
+    const style = { maindiv: null, subdiv: null, h3: null, ul: null, li: null, selected: null }
     const mainNode = node.querySelector(`div[data-uia=${SUB_MENU_SELECTOR}]`)
 
-    //some ugly try blocks because we don't want to crash if only one extraction fails
-    try { style.maindiv = mainNode.firstChild.className } catch {}
-    try { style.subdiv = mainNode.querySelector('li div div').className } catch {}
-    try { style.h3 = mainNode.querySelector('h3').className } catch {}
-    try { style.ul = mainNode.querySelector('ul').className } catch {}
-    try { style.li = mainNode.querySelector('li').className } catch {}
-    try { style.selected = mainNode.querySelector('li[data-uia*="selected"] svg').className.baseVal } catch {} // Netflix fuckery
+    if (!mainNode) return style;
+
+    style.maindiv = mainNode.firstChild?.className;
+    style.subdiv = mainNode.querySelector('li div div')?.className;
+    style.h3 = mainNode.querySelector('h3')?.className;
+    style.ul = mainNode.querySelector('ul')?.className;
+    style.li = mainNode.querySelector('li')?.className;
+    style.selected = mainNode.querySelector('li[data-uia*="selected"] svg')?.className?.baseVal; // Netflix fuckery
 
     return style
   }
@@ -640,14 +635,14 @@ activateSubtitle = id => {
   const sub = gSubtitles[id];
   if (sub) {
     gSubtitles.forEach(sub => sub.deactivate());
-    sub.activate().then(() => {gSubtitleMenu && gSubtitleMenu.render();});
+    sub.activate().then(() => { gSubtitleMenu && gSubtitleMenu.render(); });
 
     gRenderOptions.secondaryLanguageLastUsed = sub.bcp47;
     gRenderOptions.secondaryLanguageLastUsedIsCaption = sub.isCaption;
 
     if (BROWSER === 'chrome') {
       if (gMsgPort)
-        gMsgPort.postMessage({settings: gRenderOptions});
+        gMsgPort.postMessage({ settings: gRenderOptions });
     } else {
       // Firefox
       try {
@@ -694,7 +689,7 @@ const buildSecondarySubtitleElement = options => {
 // -----------------------------------------------------------------------------
 
 class PrimaryImageTransformer {
-  constructor() {}
+  constructor() { }
 
   transform(svgElem, controlsActive, forced) {
     const selector = forced ? 'image' : 'image:not(.nflxmultisubs-scaled)';
@@ -719,19 +714,19 @@ class PrimaryImageTransformer {
         img.classList.add('nflxmultisubs-scaled');
         const left = parseInt(
           img.getAttributeNS(null, 'data-orig-x') ||
-            img.getAttributeNS(null, 'x')
+          img.getAttributeNS(null, 'x')
         );
         const top = parseInt(
           img.getAttributeNS(null, 'data-orig-y') ||
-            img.getAttributeNS(null, 'y')
+          img.getAttributeNS(null, 'y')
         );
         const width = parseInt(
           img.getAttributeNS(null, 'data-orig-width') ||
-            img.getAttributeNS(null, 'width')
+          img.getAttributeNS(null, 'width')
         );
         const height = parseInt(
           img.getAttributeNS(null, 'data-orig-height') ||
-            img.getAttributeNS(null, 'height')
+          img.getAttributeNS(null, 'height')
         );
 
         const attribs = [
@@ -758,15 +753,15 @@ class PrimaryImageTransformer {
         // gSecondaryOffset moves the secondary subtitles with it
         let newTop;
 
-        if(top <= centerLine){
-          if(upperBaseline - newHeight <= 0){
-            newTop = upperBaseline - newHeight/2
-            gSecondaryOffset = newHeight/2
-          }else{
+        if (top <= centerLine) {
+          if (upperBaseline - newHeight <= 0) {
+            newTop = upperBaseline - newHeight / 2
+            gSecondaryOffset = newHeight / 2
+          } else {
             newTop = upperBaseline - newHeight
             gSecondaryOffset = 0
           }
-        }else{
+        } else {
           newTop = lowerBaseline - newHeight
           gSecondaryOffset = 0
         }
@@ -853,16 +848,16 @@ class PrimaryTextTransformer {
     // does not move automatically when the navs are active
     newTop += controlsActive ? -100 : 0;
 
-    if (containers.length == 1){
+    if (containers.length == 1) {
       style.textContent +=
-          styleText +
-          '\n' +
-          `
+        styleText +
+        '\n' +
+        `
       .player-timedtext-text-container {
         top: ${newTop}px !important;
         left: ${newLeft}px !important;
       }`;
-    }else{
+    } else {
       // Don't change position when there are multiple subtitle boxes.
       // Changing 'left:' will cause overlap.
       // This can happen for subs that have speaker-placed captioning enabled (subs that are positioned over the speaker)
@@ -891,7 +886,7 @@ class RendererLoop {
     if (BROWSER === 'chrome') {
       if (gMsgPort)
         gMsgPort.postMessage({ startPlayback: 1 });
-    }else {
+    } else {
       // Firefox
       try {
         window.postMessage({
@@ -902,7 +897,6 @@ class RendererLoop {
         console.warn('Error: cannot talk to background,', err);
       }
     }
-    //this._connect();
   }
 
   stop() {
@@ -911,7 +905,7 @@ class RendererLoop {
     if (BROWSER === 'chrome') {
       if (gMsgPort)
         gMsgPort.postMessage({ stopPlayback: 1 });
-    }else {
+    } else {
       // Firefox
       try {
         window.postMessage({
@@ -922,7 +916,6 @@ class RendererLoop {
         console.warn('Error: cannot talk to background,', err);
       }
     }
-    //this._disconnect();
   }
 
   loop() {
@@ -976,56 +969,6 @@ class RendererLoop {
 
     // everything rendered, clear the dirty bit with ease
     this.isRenderDirty = false;
-  }
-
-  _connect() {
-    // connect with background script
-    // FIXME: should disconnect this port while there's no video playing, to gray out our icon;
-    // However, we can't disconnect when <video> not found in the renderer loop,
-    // because there's a small time gap between updateManifest() and <video> is initialize.
-    if (BROWSER === 'chrome') {
-      if (gMsgPort) return;
-      try {
-        const extensionId = window.__nflxMultiSubsExtId;
-        gMsgPort = chrome.runtime.connect(extensionId);
-        console.log(`Linked: ${extensionId}`);
-
-        gMsgPort.onMessage.addListener(msg => {
-          if (!msg.settings) return;
-          gRenderOptions = Object.assign({}, msg.settings);
-          gRendererLoop && gRendererLoop.setRenderDirty();
-        });
-      } catch (err) {
-        console.warn('Error: cannot talk to background,', err);
-      }
-      return;
-    }
-
-    // Firefox
-    try {
-      window.postMessage({
-        namespace: 'nflxmultisubs',
-        action: 'connect'
-      }, '*');
-    } catch (err) {
-      console.warn('Error: cannot talk to background,', err);
-    }
-  }
-
-  _disconnect() {
-    // disconnect with background to make our icon grayscale again
-    // FIXME: renderer loop shouldn't be responsible for this
-    if (BROWSER === 'chrome') {
-      if (gMsgPort && gMsgPort.disconnect()) gMsgPort = null;
-    } else if (BROWSER === 'firefox') {
-      window.postMessage(
-        {
-          namespace: 'nflxmultisubs',
-          action: 'disconnect'
-        },
-        '*'
-      );
-    }
   }
 
   _getControlsActive() {
@@ -1137,9 +1080,9 @@ window.addEventListener('resize', evt => {
 // -----------------------------------------------------------------------------
 
 class ManifestManagerBase {
-  enumManifest() {}
-  getManifest(movieId) {}
-  saveManifest(manifest) {}
+  enumManifest() { }
+  getManifest(movieId) { }
+  saveManifest(manifest) { }
 }
 
 
@@ -1177,7 +1120,6 @@ class ManifestManagerLocalStorage extends ManifestManagerBase {
       return null;
     }
 
-    // console.log(`Manifest ${movieId} found in localStorage`);
     const manifest = JSON.parse(item).manifest;
     return manifest;
   }
@@ -1196,14 +1138,12 @@ class ManifestManagerLocalStorage extends ManifestManagerBase {
 const extractMovieIdFromUrl = () => {
   const isInPlayerPage = /netflix\.com\/watch/i.test(window.location.href);
   if (!isInPlayerPage) {
-    // console.log('Not in player page');
     return null;
   }
 
   try {
     const movieIdInUrl = /^\/watch\/(\d+)/.exec(window.location.pathname)[1];
     const movieId = parseInt(movieIdInUrl);
-    //console.log(`Movie in URL: ${movieId}`)
     return movieId;
   }
   catch (err) {
@@ -1291,22 +1231,17 @@ class NflxMultiSubsManager {
 
           // For cadmium-playercore-6.0012.183.041.js and later
           gSubtitles = buildSubtitleList(manifest.timedtexttracks);
-          //gSubtitleMenu = new SubtitleMenu();
-          //gSubtitleMenu.render();
 
           // select subtitle based on language settings
           console.log('Language mode: ', gRenderOptions.secondaryLanguageMode);
-          switch(String(gRenderOptions.secondaryLanguageMode)){
+          switch (String(gRenderOptions.secondaryLanguageMode)) {
             case 'disabled':
               console.log('Subs disabled.');
               break;
             default:
             case 'audio':
               try {
-                /* Note 2021/11/04 :
-                    manifest.defaultTrackOrderList doesn't exist anymore. We can use the audio track's isNative flag instead.
-                    There is also manifest.recommendedMedia.audioTrackId , but it just points to the track with isNative == true. */
-                //const defaultAudioId = manifest.defaultTrackOrderList[0].audioTrackId;
+                // There is also manifest.recommendedMedia.audioTrackId, but it just points to the track with isNative == true
                 const defaultAudioTrack = manifest.audio_tracks.find(t => t.isNative == true);
                 const defaultAudioLanguage = (defaultAudioTrack) ? defaultAudioTrack.language : manifest.audio_tracks[0].language; // fall back to first track if isNative fails
                 console.log(`Default audio track language: ${defaultAudioLanguage}`);
@@ -1314,7 +1249,7 @@ class NflxMultiSubsManager {
                 if (autoSubtitleId >= 0) {
                   console.log(`Subtitle #${autoSubtitleId} auto-enabled to match audio`);
                   activateSubtitle(autoSubtitleId);
-                }else{
+                } else {
                   console.log(defaultAudioLanguage + ' subs not available.');
                 }
               }
@@ -1323,9 +1258,9 @@ class NflxMultiSubsManager {
               }
               break;
             case 'last':
-              if (gRenderOptions.secondaryLanguageLastUsed){
+              if (gRenderOptions.secondaryLanguageLastUsed) {
                 console.log('Activating last sub language', gRenderOptions.secondaryLanguageLastUsed)
-                try{
+                try {
                   let lastSubtitleId = gSubtitles.findIndex(t => (t.bcp47 == gRenderOptions.secondaryLanguageLastUsed && t.isCaption == gRenderOptions.secondaryLanguageLastUsedIsCaption));
                   // if can't match CC type, fall back to language only
                   if (lastSubtitleId == -1)
@@ -1333,13 +1268,13 @@ class NflxMultiSubsManager {
                   if (lastSubtitleId >= 0) {
                     console.log(`Subtitle #${lastSubtitleId} enabled`);
                     activateSubtitle(lastSubtitleId);
-                  }else{
+                  } else {
                     console.log(gRenderOptions.secondaryLanguageLastUsed + ' subs not available.');
                   }
-                } catch (err){
+                } catch (err) {
                   console.error('Error activating last sub language, ', err);
                 }
-              }else{
+              } else {
                 console.log('Last used language is empty, subs disabled.');
               }
               break;
@@ -1401,13 +1336,10 @@ class NflxMultiSubsManager {
   }
 }
 
+// =============================================================================
+
 const nflxMultiSubsManager = new NflxMultiSubsManager();
 window.__NflxMultiSubs = nflxMultiSubsManager;  // interface between us and the the manifest hook
-
-// =============================================================================
-
-
-// =============================================================================
 
 // control video playback rate
 const playbackRateController = new PlaybackRateController();
@@ -1423,7 +1355,7 @@ window.addEventListener('keydown', (event) => {
       return;
 
     const visible = (window.getComputedStyle(primary).visibility === 'visible') ||
-        (window.getComputedStyle(secondary).visibility === 'visible');
+      (window.getComputedStyle(secondary).visibility === 'visible');
 
     primary.style.visibility = secondary.style.visibility = (visible) ? 'hidden' : 'visible';
   }
