@@ -22,7 +22,9 @@ class PlaybackRateController {
 
 
   _keyUpHandler(evt) {
-    if (!['BracketLeft', 'BracketRight'].includes(evt.code) && !['[', ']'].includes(evt.key) ) return;
+    if (evt.ctrlKey || evt.altKey || evt.metaKey || evt.shiftKey) return;
+
+    if (!['BracketLeft', 'BracketRight'].includes(evt.code) && !['[', ']'].includes(evt.key)) return;
 
     const playerContainer = document.querySelector('.watch-video');
     if (!playerContainer) return;
@@ -32,7 +34,7 @@ class PlaybackRateController {
 
     let playbackRate = video.playbackRate;
     if (evt.code === 'BracketLeft' || evt.key === '[') playbackRate -= 0.1;
-    else if (evt.code === 'BracketRight'|| evt.key === ']') playbackRate += 0.1;
+    else if (evt.code === 'BracketRight' || evt.key === ']') playbackRate += 0.1;
 
     playbackRate = Math.max(Math.min(playbackRate, 3.0), 0.1);
     video.playbackRate = playbackRate;
@@ -44,7 +46,7 @@ class PlaybackRateController {
       osd.style.position = 'absolute'; osd.style.top = '10%'; osd.style.right = '5%';
       osd.style.fontSize = '36px'; osd.style.fontFamily = 'sans-serif';
       osd.style.fontWeight = '800'; osd.style.color = 'white';
-      osd.style.display = 'flex'; osd.style.alignItems='center';
+      osd.style.display = 'flex'; osd.style.alignItems = 'center';
       osd.style.zIndex = 2;
       playerContainer.appendChild(osd);
     }
